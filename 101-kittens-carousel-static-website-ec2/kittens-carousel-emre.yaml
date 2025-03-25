@@ -1,29 +1,27 @@
-AWSTemplateFormatVersion: "2010-09-09"  
+AWSTemplateFormatVersion: 2010-09-09
 Description: |
+  This CloudFormation Template was written for running Kittens Carousel Static Website on EC2. 
+  Kittens Carousel Static Website will be deployed on Amazon Linux 2023 EC2 Instance with custom 
+  security group which allows http connections on port 80 and ssh port 22 from anywhere. Kittens Carousel Static Website
+  is downloaded from my Public Github repository, then deployed on Apache Web Server
 
 Parameters:
-keypair:
+  keypair:
     Description: Choose your keypair
-    Type: AWS::EC2::KeyPair::emre-aws20
-    Default: emre-aws
-  
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: emre-aws20
+
   ParameterName:
     Description: Choose your imageid
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64
-
-
-
-
-
-
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64 
 Resources:
+  
   mySecGrp:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow ssh and http # Required
-      GroupName: emre-sec-grp
-      
+      GroupDescription: Allows ssh and http
+      GroupName: emre-aws20
       SecurityGroupIngress: 
         - CidrIp: 0.0.0.0/0
           FromPort: 22
@@ -33,22 +31,36 @@ Resources:
           FromPort: 80
           IpProtocol: tcp
           ToPort: 80
-
-
+  
   mywebserver:
     Type: AWS::EC2::Instance
     Properties:
-      
-      ImageId: !Ref ParameterName
-      
-      KeyName: !Ref keypair
+      ImageId: ami-08b5b3a93ed654d19
       InstanceType: t2.micro
+      KeyName: !Ref keypair
       SecurityGroupIds: 
         - !Ref mySecGrp
       Tags: 
         - Key: Name
           Value: !Sub Web Server of ${AWS::StackName}
-      UserData: 
-    
-     
-
+      UserData: !Base64 |
+        #!/bin/bash
+        dnf update -y
+        dnf install httpd wget -y
+        rm -f /var/www/html/index.html
+        FOLDER="https://raw.githubusercontent.com/EmreTurgut1/aws-project/refs/heads/main/101-kittens-carousel-static-website-ec2/static-web"
+        cd /var/www/html
+        wget ${FOLDER}/index.html || { echo "Failed to download index.html"; exit 1; }
+        wget ${FOLDER}/cat0.jpg || { echo "Failed to download cat0.jpg"; exit 1; }
+        wget ${FOLDER}/cat1.jpg || { echo "Failed to download cat1.jpg"; exit 1; }
+        wget ${FOLDER}/cat2.jpg || { echo "Failed to download cat2.jpg"; exit 1; }
+        chmod 644 /var/www/html/*
+        chown apache:apache /var/www/html/*
+        systemctl start httpd
+        systemctl enable httpd
+Outputs:
+  WebSiteURL:
+    Description: URL of website
+    Value: !Sub
+      - http://${PublicDNS}
+      - PublicDNS: !GetAtt mywebserver.PublicDnsName
