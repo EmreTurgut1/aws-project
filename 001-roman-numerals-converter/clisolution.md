@@ -22,7 +22,7 @@ aws sts get-caller-identity --query Account --output text
 
 ```bash
 aws ec2 create-security-group \
-    --group-name aws20_roman_numbers_converter_sec_grp \
+    --group-name emre-aws20_roman_numbers_converter_sec_grp \
     --description "This Sec Group is to allow ssh and http from anywhere"
 ```
 
@@ -35,13 +35,13 @@ aws ec2 describe-security-groups --group-names oktaws20_roman_numbers_converter_
 
 ```bash
 aws ec2 authorize-security-group-ingress \
-    --group-name aws20_roman_numbers_converter_sec_grp \
+    --group-name emre-aws20_roman_numbers_converter_sec_grp \
     --protocol tcp \
     --port 22 \
     --cidr 0.0.0.0/0
 
 aws ec2 authorize-security-group-ingress \
-    --group-name aws20_roman_numbers_converter_sec_grp \
+    --group-name emre-aws20_roman_numbers_converter_sec_grp \
     --protocol tcp \
     --port 80 \
     --cidr 0.0.0.0/0
@@ -76,7 +76,7 @@ yum update -y
 yum install python3
 pip3 install flask
 cd /home/ec2-user
-FOLDER="https://github.com/xxxxx/xxxxx/tree/main/001-roman-numerals-converter"
+FOLDER="https://github.com/EmreTurgut1/aws-project/tree/main/001-roman-numerals-converter"
 wget ${FOLDER}/roman-numerals-converter-app.py
 mkdir templates && cd templates
 wget ${FOLDER}/templates/index.html
@@ -85,15 +85,15 @@ cd ..
 python3 roman-numerals-converter-app.py
 ```
 ```bash
-aws ec2 run-instances --image-id $LATEST_AMI --count 1 --instance-type t2.micro --key-name xxxx --security-groups aws20_roman_numbers_converter_sec_grp --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=roman_numbers}]' --user-data file:///home/ec2-user/userdata.sh
+aws ec2 run-instances --image-id $LATEST_AMI --count 1 --instance-type t2.micro --key-name emre-aws20 --security-groups  emre-aws20_roman_numbers_converter_sec_grp --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=roman_numbers}]' --user-data file:///home/ec2-user/userdata.sh
 or
 
 aws ec2 run-instances \
     --image-id $LATEST_AMI \
     --count 1 \
     --instance-type t2.micro \
-    --key-name xxxx \
-    --security-groups okde07_roman_numbers_converter_sec_grp \
+    --key-name emre-aws20 \
+    --security-groups emre-roman_numbers_converter_sec_grp \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=roman_numbers}]' \
     --user-data file:///home/ec2-user/userdata.sh
 ```
