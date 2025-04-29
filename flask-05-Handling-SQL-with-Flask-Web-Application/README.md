@@ -92,7 +92,7 @@ https://sqlitebrowser.org/)
 
 ```
 - Engine option         : MySQL
-- Version               : 8.0.35
+- Version               : 8.0.40
 - Template              : Free tier
 - DB instance class     : db.t2.micro
 - Publicly accessible   : ***Yes
