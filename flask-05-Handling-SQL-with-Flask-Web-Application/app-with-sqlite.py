@@ -16,12 +16,12 @@ with app.app_context():
     data = text("""
     INSERT INTO users
     VALUES
-        ("caner", "caner@amazon.com"),
-        ("hasan", "hasan@google.com"),
-        ("ibrahim", "ibrahim@bmw.com"),
-        ("ramazan", "ramazan@mercedes.com"),
-	    ("aynur", "aynur@porche.com"),
-        ("fatih", "fatih@huwaei.com");
+        ("emre", "emre@amazon.com"),
+        ("akif", "akif@google.com"),
+        ("fatih", "fatih@bmw.com"),
+        ("canan", "ramazan@mercedes.com"),
+	    ("neşe", "aynur@porche.com"),
+        ("samed", "fatih@huwaei.com");
         """)
     db.session.execute(drop_table)
     db.session.execute(users_table)
@@ -82,7 +82,7 @@ def add_email():
 
 # - Add a statement to run the Flask application which can be reached from any host on port 80.
 if __name__=='__main__':
-    # app.run(debug=True)
+    #app.run(debug=True)
     app.run(host='0.0.0.0', port=80)
 
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/config/
